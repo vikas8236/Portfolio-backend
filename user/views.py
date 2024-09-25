@@ -1,7 +1,7 @@
-from user.models import User, Project, Skill, Experience
+from user.models import User, Project, Skill, Experience, AboutMe, SocialMedia, Contact, Education
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from user.serializers import UserSerializer, LoginSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer, ProjectsSerializer,SkillsSerializer, ExperienceSerializer
+from user.serializers import UserSerializer, LoginSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer, ProjectsSerializer,SkillsSerializer, ExperienceSerializer, AboutMeSerializer,SocialMediaSerializer, ContactSerializer, EducationSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
@@ -141,17 +141,22 @@ class ProjectListView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 class skillsListView(APIView):
     def get(self, request, id=None):
+        # Check if a specific skill ID is provided
         if id is not None:
-            # If an id is provided, retrieve the specific project
             skill = get_object_or_404(Skill, id=id)
             serializer = SkillsSerializer(skill)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        # Check for category in query parameters (technical/other)
+        category = request.query_params.get('category', None)
+        
+        if category in [Skill.TECHNICAL, Skill.OTHER]:
+            skill_list = Skill.objects.filter(category=category)
         else:
-            # If no id is provided, retrieve all skills
             skill_list = Skill.objects.all()
-            serializer = SkillsSerializer(skill_list, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
+        
+        serializer = SkillsSerializer(skill_list, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 class experienceListView(APIView):
     def get(self, request, id=None):
         if id is not None:
@@ -164,4 +169,65 @@ class experienceListView(APIView):
             exp_list = Experience.objects.all()
             serializer = ExperienceSerializer(exp_list, many=True)
             return Response(serializer.data)
+
+class AboutMeListView(APIView):
+    def get(self, request, id=None):
+        if id is not None:
+            # Fetch the specific project by id
+            about_me = get_object_or_404(AboutMe, id=id)
+            serializer = AboutMeSerializer(about_me)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            # Fetch all projects
+            about_me_all = AboutMe.objects.all()
+            serializer = AboutMeSerializer(about_me_all, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)        
+
+
+
+class SocialMediaListView(APIView):
+    def get(self, request, id=None):
+        if id is not None:
+            # Fetch the specific project by id
+            social_media = get_object_or_404(SocialMedia, id=id)
+            serializer = SocialMediaSerializer(social_media)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            # Fetch all projects
+            social_media_all = SocialMedia.objects.all()
+            serializer = SocialMediaSerializer(social_media_all, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)         
+
+class ContactListView(APIView):
+    def get(self, request, id=None):
+        if id is not None:
+            # Fetch the specific contact by id
+            contact_one = get_object_or_404(Contact, id=id)
+            serializer = ContactSerializer(contact_one)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            # Fetch all contacts
+            contact_all = Contact.objects.all()
+            serializer = ContactSerializer(contact_all, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        # Create a new contact
+        serializer = ContactSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()  # Save the new contact to the database
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
         
+class EducationListView(APIView):   
+    def get(self, request, id=None):
+        if id is not None:
+            # Fetch the specific project by id
+            educaton = get_object_or_404(Education, id=id)
+            serializer = EducationSerializer(educaton)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            # Fetch all projects
+            education_all = Education.objects.all()
+            serializer = EducationSerializer(education_all, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)           

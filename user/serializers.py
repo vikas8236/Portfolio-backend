@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from user.models import User, Project,Skill, Experience
+from user.models import User, Project,Skill, Experience, AboutMe, SocialMedia, Contact, Education
 from django.contrib.auth import authenticate
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -56,4 +56,23 @@ class ExperienceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Experience
         fields = '__all__'
-            
+
+class AboutMeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AboutMe
+        fields = '__all__'
+
+class SocialMediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SocialMedia
+        fields = '__all__'        
+        
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = '__all__'     
+        
+class EducationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Education
+        fields = '__all__'                    

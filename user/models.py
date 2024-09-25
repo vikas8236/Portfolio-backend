@@ -7,6 +7,7 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
+        
 # API for User Authentication
 class User(AbstractUser, BaseModel):
     username = None
@@ -20,6 +21,7 @@ class User(AbstractUser, BaseModel):
 
     def __str__(self):
         return self.email
+    
 # API for Projects Section
 class Project(models.Model):
     project_name = models.CharField(max_length=100)
@@ -31,18 +33,46 @@ class Project(models.Model):
     
     def __str__(self):
         return self.project_name
+    
 # API for Skills Section    
 class Skill(models.Model):
+    
+    TECHNICAL = 'technical'
+    PROFESSIONAL = 'professional'
+    SOCIAL = 'social'
+    OTHER = 'other'
+    
+    SKILL_CATEGORIES = [
+        (TECHNICAL, 'Technical Skill'),
+        (PROFESSIONAL, 'Professional Skills'),
+        (SOCIAL, 'Social Skills'),
+        (OTHER, 'Other Skill'),
+    ]
+    
+    
+    FRONTEND = 'frontend'
+    BACKEND = 'backend'
+    DATABASE = 'database'
+    MANAGEMENT = 'management'
+    OTHER = 'other'
+    
+    SKILL_TYPES = [
+        (FRONTEND, 'Frontend Development'),
+        (BACKEND, 'Backend Development'),
+        (DATABASE, 'Database Management'),
+        (MANAGEMENT, 'Project Management'),
+        (OTHER, 'Other Skills'),
+    ]
+    
     skill_name = models.CharField(max_length=200)
-    Proficiency_level = models.CharField(max_length=40)
-    category = models.CharField(max_length=50)
+    proficiency_level = models.CharField(max_length=40)
+    category = models.CharField(max_length=50, choices=SKILL_CATEGORIES, default=TECHNICAL)  
     years_of_experience = models.DecimalField(max_digits=2, decimal_places=1)
     icon = models.URLField()
-    project_name = models.ManyToManyField(Project)
+    project = models.CharField(max_length=100, null=True, blank= True)  
     last_used = models.CharField(max_length=10)
     description = models.TextField(max_length=1000)
-    skill_type = models.CharField(max_length=50)
-    
+    skill_type = models.CharField(max_length=50, choices=SKILL_TYPES, default=FRONTEND) 
     
     def __str__(self):
         return self.skill_name
@@ -64,13 +94,43 @@ class Experience(models.Model):
 
     def __str__(self):
         return f"{self.job_title} at {self.company}"
+    
 # API for About Me Section    
 class AboutMe(models.Model):
     name = models.CharField(max_length=30)
-    profile_pic = models.ImageField(upload_to='images', null=True, blank= True)
+    profile_pic = models.ImageField(upload_to='images', null=True, blank = True)
     bio = models.TextField(max_length=500)
     location = models.CharField(max_length=100)
     linkdin = models.URLField(null=True, blank=True)
     
     def __str__(self):
         return self.name
+    
+# API for Social media Section       
+class SocialMedia(models.Model):
+    platform_name = models.CharField(max_length=30)
+    platform_url = models.URLField()
+    
+    def __str__(self):
+        return self.platform_name 
+     
+# API for contact Section     
+class Contact(models.Model):
+    name = models.CharField(max_length=30)  
+    email = models.EmailField()
+    subject = models.CharField(max_length=100)
+    message = models.TextField(max_length=1000)  
+    
+    def __str__(self):
+        return self.name  
+    
+# API for education Section    
+class Education(models.Model):
+    title = models.CharField(max_length=100)
+    logo = models.ImageField(upload_to='images', null=True, blank=True) 
+    description = models.TextField(max_length=500)   
+    
+    def __str__(self):
+        return self.title
+
+    
