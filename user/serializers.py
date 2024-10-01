@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from user.models import User, Project,Skill, Experience, AboutMe, SocialMedia, Contact, Education
-from django.contrib.auth import authenticate
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
